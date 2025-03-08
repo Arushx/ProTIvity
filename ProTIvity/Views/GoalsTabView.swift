@@ -1,88 +1,115 @@
-//
-//  GoalsTabView.swift
-//  ProTIvity
-//
-//  Created by Arush Gupta on 2025-03-03.
-//
-
-import Foundation
 import SwiftUI
 
-// This is the main GoalsTabView used in the app's tab bar
-struct MainGoalsTabView: View {
-    @ObservedObject var workspaceManager: WorkspaceManager
-    
-    var body: some View {
-        NavigationView {
-            if let workspace = workspaceManager.selectedWorkspace {
-                GoalsList(workspace: workspace, workspaceManager: workspaceManager)
-            } else {
-                WorkspaceSelectionView(workspaceManager: workspaceManager)
-            }
-        }
-        .navigationViewStyle(StackNavigationViewStyle())
-    }
-}
-
-// Helper view for displaying goals
-struct GoalsList: View {
-    var workspace: Workspace
-    var workspaceManager: WorkspaceManager
+struct GoalsTabView: View {
+    @StateObject private var goalManager = GoalManager()
+    @StateObject private var taskManager = TaskManager()
     @State private var showingAddGoal = false
-    @State private var newGoalTitle = ""
+    @State private var selectedFilter: GoalFilter = .all
     
-    var body: some View {
-        List {
-            ForEach(workspace.goals) { goal in
-                GoalRowView(goal: goal, workspace: workspace, workspaceManager: workspaceManager)
-            }
-            
-            Button(action: {
-                showingAddGoal = true
-            }) {
-                Label("Add Goal", systemImage: "plus")
+    enum GoalFilter {
+        case all, active, completed, upcoming
+        
+        var title: String {
+            switch self {
+            case .all: return "All Goals"
+            case .active: return "Active"
+            case .completed: return "Completed"
+            case .upcoming: return "Upcoming"
             }
         }
-        .navigationTitle("Goals - \(workspace.name)")
-        .alert("New Goal", isPresented: $showingAddGoal) {
-            TextField("Goal Title", text: $newGoalTitle)
-            Button("Cancel", role: .cancel) { }
-            Button("Create") {
-                if !newGoalTitle.isEmpty {
-                    let newGoal = Goal(title: newGoalTitle)
-                    workspaceManager.addGoal(newGoal, to: workspace)
-                    newGoalTitle = ""
-                }
+        
+        var icon: String {
+            switch self {
+            case .all: return "target"
+            case .active: return "circle"
+            case .completed: return "checkmark.circle"
+            case .upcoming: return "calendar"
             }
         }
     }
-}
-
-// Helper view for selecting a workspace
-struct WorkspaceSelectionView: View {
-    @ObservedObject var workspaceManager: WorkspaceManager
     
     var body: some View {
         VStack {
-            Text("Select a Workspace")
-                .font(.headline)
-            
-            List {
-                ForEach(workspaceManager.workspaces) { workspace in
-                    Button(action: {
-                        workspaceManager.selectedWorkspace = workspace
-                    }) {
-                        HStack {
-                            Image(systemName: workspace.icon)
-                                .foregroundColor(workspace.color)
-                            Text(workspace.name)
-                            Spacer()
+            // Filter tabs
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 12) {
+                    ForEach([GoalFilter.all, .active, .upcoming, .completed], id: \.self) { filter in
+                        SharedFilterButton(
+                            title: filter.title,
+                            icon: filter.icon,
+                            isSelected: selectedFilter == filter
+                        ) {
+                            selectedFilter = filter
                         }
                     }
-                    .buttonStyle(PlainButtonStyle())
                 }
+                .padding(.horizontal)
             }
+            .padding(.vertical, 8)
+            
+            // Goals list
+            ScrollView {
+                LazyVStack(spacing: 16) {
+                    ForEach(filteredGoals) { goal in
+                        GoalCard(goal: goal, goalManager: goalManager, taskManager: taskManager)
+                    }
+                }
+                .padding()
+            }
+            .overlay(Group {
+                if filteredGoals.isEmpty {
+                    SharedEmptyStateView(
+                        iconName: emptyStateIcon,
+                        message: emptyStateMessage,
+                        buttonTitle: "Add Goal",
+                        buttonAction: { showingAddGoal = true }
+                    )
+                }
+            })
         }
         .navigationTitle("Goals")
+        .navigationBarItems(trailing: Button(action: {
+            showingAddGoal = true
+        }) {
+            Image(systemName: "plus")
+        })
+        .sheet(isPresented: $showingAddGoal) {
+            AddGoalView(goalManager: goalManager)
+        }
+    }
+    
+    private var filteredGoals: [Goal] {
+        switch selectedFilter {
+        case .all:
+            return goalManager.goals
+        case .active:
+            return goalManager.activeGoals()
+        case .completed:
+            return goalManager.completedGoals()
+        case .upcoming:
+            return goalManager.upcomingGoals()
+        }
+    }
+    
+    private var emptyStateIcon: String {
+        switch selectedFilter {
+        case .all: return "target"
+        case .active: return "circle"
+        case .completed: return "checkmark.circle"
+        case .upcoming: return "calendar"
+        }
+    }
+    
+    private var emptyStateMessage: String {
+        switch selectedFilter {
+        case .all:
+            return "You don't have any goals yet.\nAdd your first goal to get started!"
+        case .active:
+            return "You don't have any active goals.\nAll your goals are completed!"
+        case .completed:
+            return "You don't have any completed goals yet.\nComplete a goal to see it here!"
+        case .upcoming:
+            return "You don't have any upcoming goals.\nAdd a goal with a future deadline!"
+        }
     }
 }

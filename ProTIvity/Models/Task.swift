@@ -10,6 +10,18 @@ struct Task: Identifiable, Codable, Hashable {
     var priority: Priority = .medium
     var dueDate: Date?
     var notes: String = ""
+    var isRecurring: Bool = false
+    var recurrenceInterval: RecurrenceInterval?
+    var isArchived: Bool = false
+    var lastCompletedDate: Date?
+    var goalId: UUID?
+    
+    enum RecurrenceInterval: String, Codable, CaseIterable {
+        case daily = "Daily"
+        case weekly = "Weekly"
+        case monthly = "Monthly"
+        case yearly = "Yearly"
+    }
     
     enum Priority: String, Codable, CaseIterable {
         case low = "Low"

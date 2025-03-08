@@ -18,22 +18,14 @@
 		696B225A2D766D5A00B300AB /* TaskManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 696B22592D766D5A00B300AB /* TaskManager.swift */; };
 		696B225C2D766D8400B300AB /* TaskRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 696B225B2D766D8400B300AB /* TaskRowView.swift */; };
 		696B225F2D766DE100B300AB /* AddTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 696B225E2D766DE100B300AB /* AddTaskView.swift */; };
-		696B22612D766F5A00B300AB /* Workspace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 696B22602D766F5A00B300AB /* Workspace.swift */; };
-		696B22632D766F7E00B300AB /* WorkspaceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 696B22622D766F7E00B300AB /* WorkspaceManager.swift */; };
-		696B22652D766F9B00B300AB /* WorkspaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 696B22642D766F9B00B300AB /* WorkspaceView.swift */; };
-		696B22672D766FBA00B300AB /* AddWorkspaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 696B22662D766FBA00B300AB /* AddWorkspaceView.swift */; };
-		696B22692D766FD700B300AB /* PageEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 696B22682D766FD700B300AB /* PageEditorView.swift */; };
-		696B226B2D76742600B300AB /* WorkspaceItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 696B226A2D76742600B300AB /* WorkspaceItemView.swift */; };
-		696B226D2D76779900B300AB /* WorkspaceListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 696B226C2D76779900B300AB /* WorkspaceListView.swift */; };
 		696B226F2D7678CE00B300AB /* GoalsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 696B226E2D7678CE00B300AB /* GoalsView.swift */; };
-		696B22712D7678E800B300AB /* JournalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 696B22702D7678E800B300AB /* JournalView.swift */; };
 		696B22732D76792000B300AB /* Goal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 696B22722D76792000B300AB /* Goal.swift */; };
-		696B22752D76793200B300AB /* JournalEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 696B22742D76793200B300AB /* JournalEntry.swift */; };
 		696B227A2D767B8400B300AB /* GoalsTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 696B22792D767B8400B300AB /* GoalsTabView.swift */; };
-		696B227C2D767BA000B300AB /* JournalTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 696B227B2D767BA000B300AB /* JournalTabView.swift */; };
-		696B227E2D767BDE00B300AB /* TasksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 696B227D2D767BDE00B300AB /* TasksView.swift */; };
-		69B3CE942D77992E00254DB7 /* WorkspaceDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69B3CE932D77992E00254DB7 /* WorkspaceDetailView.swift */; };
-		69B3CE962D779BBC00254DB7 /* PageItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69B3CE952D779BBC00254DB7 /* PageItemView.swift */; };
+		69E5B3B62D7CBDA600A334C3 /* TaskManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69E5B3B52D7CBDA600A334C3 /* TaskManagementView.swift */; };
+		69E5B3B82D7CBDD100A334C3 /* GanttChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69E5B3B72D7CBDD100A334C3 /* GanttChartView.swift */; };
+		69E5B3BA2D7CC0F000A334C3 /* SharedComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69E5B3B92D7CC0F000A334C3 /* SharedComponents.swift */; };
+		69E5B3BC2D7CC41100A334C3 /* GoalManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69E5B3BB2D7CC41100A334C3 /* GoalManager.swift */; };
+		69E5B3BE2D7CC4B500A334C3 /* MainTasksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69E5B3BD2D7CC4B500A334C3 /* MainTasksView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -68,22 +60,14 @@
 		696B22592D766D5A00B300AB /* TaskManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskManager.swift; sourceTree = "<group>"; };
 		696B225B2D766D8400B300AB /* TaskRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskRowView.swift; sourceTree = "<group>"; };
 		696B225E2D766DE100B300AB /* AddTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskView.swift; sourceTree = "<group>"; };
-		696B22602D766F5A00B300AB /* Workspace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Workspace.swift; sourceTree = "<group>"; };
-		696B22622D766F7E00B300AB /* WorkspaceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceManager.swift; sourceTree = "<group>"; };
-		696B22642D766F9B00B300AB /* WorkspaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceView.swift; sourceTree = "<group>"; };
-		696B22662D766FBA00B300AB /* AddWorkspaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWorkspaceView.swift; sourceTree = "<group>"; };
-		696B22682D766FD700B300AB /* PageEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageEditorView.swift; sourceTree = "<group>"; };
-		696B226A2D76742600B300AB /* WorkspaceItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceItemView.swift; sourceTree = "<group>"; };
-		696B226C2D76779900B300AB /* WorkspaceListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceListView.swift; sourceTree = "<group>"; };
 		696B226E2D7678CE00B300AB /* GoalsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsView.swift; sourceTree = "<group>"; };
-		696B22702D7678E800B300AB /* JournalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JournalView.swift; sourceTree = "<group>"; };
 		696B22722D76792000B300AB /* Goal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Goal.swift; sourceTree = "<group>"; };
-		696B22742D76793200B300AB /* JournalEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JournalEntry.swift; sourceTree = "<group>"; };
 		696B22792D767B8400B300AB /* GoalsTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsTabView.swift; sourceTree = "<group>"; };
-		696B227B2D767BA000B300AB /* JournalTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JournalTabView.swift; sourceTree = "<group>"; };
-		696B227D2D767BDE00B300AB /* TasksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasksView.swift; sourceTree = "<group>"; };
-		69B3CE932D77992E00254DB7 /* WorkspaceDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceDetailView.swift; sourceTree = "<group>"; };
-		69B3CE952D779BBC00254DB7 /* PageItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageItemView.swift; sourceTree = "<group>"; };
+		69E5B3B52D7CBDA600A334C3 /* TaskManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskManagementView.swift; sourceTree = "<group>"; };
+		69E5B3B72D7CBDD100A334C3 /* GanttChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GanttChartView.swift; sourceTree = "<group>"; };
+		69E5B3B92D7CC0F000A334C3 /* SharedComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedComponents.swift; sourceTree = "<group>"; };
+		69E5B3BB2D7CC41100A334C3 /* GoalManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalManager.swift; sourceTree = "<group>"; };
+		69E5B3BD2D7CC4B500A334C3 /* MainTasksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTasksView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -174,10 +158,8 @@
 			children = (
 				696B22572D766D3100B300AB /* Task.swift */,
 				696B22592D766D5A00B300AB /* TaskManager.swift */,
-				696B22602D766F5A00B300AB /* Workspace.swift */,
-				696B22622D766F7E00B300AB /* WorkspaceManager.swift */,
 				696B22722D76792000B300AB /* Goal.swift */,
-				696B22742D76793200B300AB /* JournalEntry.swift */,
+				69E5B3BB2D7CC41100A334C3 /* GoalManager.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -187,18 +169,12 @@
 			children = (
 				696B225B2D766D8400B300AB /* TaskRowView.swift */,
 				696B225E2D766DE100B300AB /* AddTaskView.swift */,
-				696B22642D766F9B00B300AB /* WorkspaceView.swift */,
-				696B22662D766FBA00B300AB /* AddWorkspaceView.swift */,
-				696B22682D766FD700B300AB /* PageEditorView.swift */,
-				696B226A2D76742600B300AB /* WorkspaceItemView.swift */,
-				696B226C2D76779900B300AB /* WorkspaceListView.swift */,
 				696B226E2D7678CE00B300AB /* GoalsView.swift */,
-				696B22702D7678E800B300AB /* JournalView.swift */,
 				696B22792D767B8400B300AB /* GoalsTabView.swift */,
-				696B227B2D767BA000B300AB /* JournalTabView.swift */,
-				696B227D2D767BDE00B300AB /* TasksView.swift */,
-				69B3CE932D77992E00254DB7 /* WorkspaceDetailView.swift */,
-				69B3CE952D779BBC00254DB7 /* PageItemView.swift */,
+				69E5B3B52D7CBDA600A334C3 /* TaskManagementView.swift */,
+				69E5B3B72D7CBDD100A334C3 /* GanttChartView.swift */,
+				69E5B3B92D7CC0F000A334C3 /* SharedComponents.swift */,
+				69E5B3BD2D7CC4B500A334C3 /* MainTasksView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -333,28 +309,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				696B22652D766F9B00B300AB /* WorkspaceView.swift in Sources */,
+				69E5B3BE2D7CC4B500A334C3 /* MainTasksView.swift in Sources */,
 				696B225C2D766D8400B300AB /* TaskRowView.swift in Sources */,
-				696B22672D766FBA00B300AB /* AddWorkspaceView.swift in Sources */,
+				69E5B3B82D7CBDD100A334C3 /* GanttChartView.swift in Sources */,
 				696B227A2D767B8400B300AB /* GoalsTabView.swift in Sources */,
-				696B227C2D767BA000B300AB /* JournalTabView.swift in Sources */,
-				696B22612D766F5A00B300AB /* Workspace.swift in Sources */,
+				69E5B3BA2D7CC0F000A334C3 /* SharedComponents.swift in Sources */,
 				696B222F2D766C7000B300AB /* ContentView.swift in Sources */,
-				696B22632D766F7E00B300AB /* WorkspaceManager.swift in Sources */,
-				69B3CE962D779BBC00254DB7 /* PageItemView.swift in Sources */,
-				696B22712D7678E800B300AB /* JournalView.swift in Sources */,
-				696B22692D766FD700B300AB /* PageEditorView.swift in Sources */,
-				696B22752D76793200B300AB /* JournalEntry.swift in Sources */,
 				696B22732D76792000B300AB /* Goal.swift in Sources */,
-				696B226B2D76742600B300AB /* WorkspaceItemView.swift in Sources */,
 				696B22582D766D3100B300AB /* Task.swift in Sources */,
-				696B226D2D76779900B300AB /* WorkspaceListView.swift in Sources */,
 				696B225F2D766DE100B300AB /* AddTaskView.swift in Sources */,
-				69B3CE942D77992E00254DB7 /* WorkspaceDetailView.swift in Sources */,
+				69E5B3B62D7CBDA600A334C3 /* TaskManagementView.swift in Sources */,
+				69E5B3BC2D7CC41100A334C3 /* GoalManager.swift in Sources */,
 				696B226F2D7678CE00B300AB /* GoalsView.swift in Sources */,
 				696B225A2D766D5A00B300AB /* TaskManager.swift in Sources */,
 				696B222D2D766C7000B300AB /* ProTIvityApp.swift in Sources */,
-				696B227E2D767BDE00B300AB /* TasksView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

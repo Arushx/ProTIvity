@@ -1,102 +1,100 @@
-import Foundation
 import SwiftUI
 
 struct GoalsView: View {
-    @ObservedObject var workspaceManager: WorkspaceManager
+    @StateObject private var goalManager = GoalManager()
+    @StateObject private var taskManager = TaskManager()
     @State private var showingAddGoal = false
     @State private var selectedFilter: GoalFilter = .all
     @State private var searchText = ""
-    @State private var refreshID = UUID()
     
     enum GoalFilter {
         case all, active, completed, upcoming
+        
+        var title: String {
+            switch self {
+            case .all: return "All"
+            case .active: return "Active"
+            case .completed: return "Completed"
+            case .upcoming: return "Upcoming"
+            }
+        }
+        
+        var icon: String {
+            switch self {
+            case .all: return "list.bullet"
+            case .active: return "circle"
+            case .completed: return "checkmark.circle.fill"
+            case .upcoming: return "calendar"
+            }
+        }
     }
     
     var body: some View {
-        VStack(spacing: 0) {
-            // Search bar
-            HStack {
-                Image(systemName: "magnifyingglass")
-                    .foregroundColor(.secondary)
-                TextField("Search goals...", text: $searchText)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-            }
-            .padding(.horizontal)
-            .padding(.top, 8)
-            .padding(.bottom, 4)
-            .background(Color(.systemBackground))
-            
-            // Filter tabs
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 12) {
-                    GoalFilterButton(title: "All", icon: "list.bullet", isSelected: selectedFilter == .all) {
-                        selectedFilter = .all
-                    }
-                    
-                    GoalFilterButton(title: "Active", icon: "circle", isSelected: selectedFilter == .active) {
-                        selectedFilter = .active
-                    }
-                    
-                    GoalFilterButton(title: "Upcoming", icon: "calendar", isSelected: selectedFilter == .upcoming) {
-                        selectedFilter = .upcoming
-                    }
-                    
-                    GoalFilterButton(title: "Completed", icon: "checkmark.circle.fill", isSelected: selectedFilter == .completed) {
-                        selectedFilter = .completed
-                    }
+        NavigationView {
+            VStack(spacing: 0) {
+                // Search bar
+                HStack {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundColor(.secondary)
+                    TextField("Search goals...", text: $searchText)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
                 }
                 .padding(.horizontal)
-            }
-            .padding(.vertical, 8)
-            .background(Color(.systemBackground))
-            
-            if let workspace = workspaceManager.selectedWorkspace {
-                let goals = filteredGoals(in: workspace)
+                .padding(.top, 8)
+                .padding(.bottom, 4)
                 
-                if goals.isEmpty {
-                    // Empty state view
-                    Spacer()
-                    EmptyStateView(filter: selectedFilter, showAddGoal: $showingAddGoal)
-                    Spacer()
-                } else {
-                    // Goals list
-                    ScrollView {
-                        LazyVStack(spacing: 16) {
-                            ForEach(goals) { goal in
-                                GoalCard(goal: goal, workspace: workspace, workspaceManager: workspaceManager)
-                                    .id("\(goal.id)-\(refreshID)")
+                // Filter tabs
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 12) {
+                        ForEach([GoalFilter.all, .active, .upcoming, .completed], id: \.self) { filter in
+                            SharedFilterButton(
+                                title: filter.title,
+                                icon: filter.icon,
+                                isSelected: selectedFilter == filter
+                            ) {
+                                selectedFilter = filter
                             }
                         }
-                        .padding()
                     }
+                    .padding(.horizontal)
                 }
-            } else {
-                // No workspace selected
-                Spacer()
-                WorkspacePrompt(workspaceManager: workspaceManager)
-                Spacer()
+                .padding(.vertical, 8)
+                .background(Color(.systemBackground))
+                
+                // Goals list
+                ScrollView {
+                    LazyVStack(spacing: 16) {
+                        ForEach(filteredGoals) { goal in
+                            GoalCard(goal: goal, goalManager: goalManager, taskManager: taskManager)
+                        }
+                    }
+                    .padding()
+                }
+                .overlay(Group {
+                    if filteredGoals.isEmpty {
+                        SharedEmptyStateView(
+                            iconName: emptyStateIcon,
+                            message: emptyStateMessage,
+                            buttonTitle: "Add Goal",
+                            buttonAction: { showingAddGoal = true }
+                        )
+                    }
+                })
+            }
+            .navigationTitle("Goals")
+            .navigationBarItems(trailing: Button(action: {
+                showingAddGoal = true
+            }) {
+                Image(systemName: "plus")
+            })
+            .sheet(isPresented: $showingAddGoal) {
+                AddGoalView(goalManager: goalManager)
             }
         }
-        .navigationTitle("Goals")
-        .navigationBarItems(trailing: Button(action: {
-            showingAddGoal = true
-        }) {
-            Image(systemName: "plus")
-        })
-        .sheet(isPresented: $showingAddGoal) {
-            AddGoalView(workspaceManager: workspaceManager)
-        }
-        .onAppear {
-            workspaceManager.loadFromUserDefaults()
-        }
-        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("WorkspaceDataChanged"))) { _ in
-            refreshID = UUID()
-        }
-        .background(Color(.systemGroupedBackground).edgesIgnoringSafeArea(.all))
     }
     
-    private func filteredGoals(in workspace: Workspace) -> [Goal] {
-        var goals = workspace.goals
+    private var filteredGoals: [Goal] {
+        var goals = goalManager.goals
         
         // Apply search filter
         if !searchText.isEmpty {
@@ -124,62 +122,9 @@ struct GoalsView: View {
             }
         }
     }
-}
-
-struct GoalFilterButton: View {
-    var title: String
-    var icon: String
-    var isSelected: Bool
-    var action: () -> Void
     
-    var body: some View {
-        Button(action: action) {
-            HStack {
-                Image(systemName: icon)
-                Text(title)
-            }
-            .padding(.vertical, 8)
-            .padding(.horizontal, 16)
-            .background(isSelected ? Color.blue : Color.gray.opacity(0.2))
-            .foregroundColor(isSelected ? .white : .primary)
-            .cornerRadius(10)
-        }
-    }
-}
-
-struct EmptyStateView: View {
-    var filter: GoalsView.GoalFilter
-    @Binding var showAddGoal: Bool
-    
-    var body: some View {
-        VStack(spacing: 20) {
-            Image(systemName: iconName)
-                .font(.system(size: 70))
-                .foregroundColor(.blue.opacity(0.6))
-            
-            Text(message)
-                .font(.headline)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal)
-            
-            Button(action: {
-                showAddGoal = true
-            }) {
-                Text("Add Goal")
-                    .fontWeight(.semibold)
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 24)
-                    .padding(.vertical, 12)
-                    .background(Color.blue)
-                    .cornerRadius(12)
-            }
-        }
-        .padding()
-    }
-    
-    var iconName: String {
-        switch filter {
+    private var emptyStateIcon: String {
+        switch selectedFilter {
         case .all: return "target"
         case .active: return "circle"
         case .completed: return "checkmark.circle"
@@ -187,8 +132,12 @@ struct EmptyStateView: View {
         }
     }
     
-    var message: String {
-        switch filter {
+    private var emptyStateMessage: String {
+        if !searchText.isEmpty {
+            return "No goals match your search for '\(searchText)'"
+        }
+        
+        switch selectedFilter {
         case .all:
             return "You don't have any goals yet.\nAdd your first goal to get started!"
         case .active:
@@ -202,17 +151,19 @@ struct EmptyStateView: View {
 }
 
 struct GoalCard: View {
-    var goal: Goal
-    var workspace: Workspace
-    var workspaceManager: WorkspaceManager
+    let goal: Goal
+    @ObservedObject var goalManager: GoalManager
+    @ObservedObject var taskManager: TaskManager
+    @State private var showingTaskManagement = false
     @State private var showingEditSheet = false
     @State private var showingDeleteAlert = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
+            // Header
             HStack {
                 Button(action: {
-                    toggleCompletion()
+                    goalManager.toggleGoalCompletion(goal)
                 }) {
                     Image(systemName: goal.isCompleted ? "checkmark.circle.fill" : "circle")
                         .font(.system(size: 24))
@@ -253,6 +204,58 @@ struct GoalCard: View {
                     .lineLimit(2)
             }
             
+            // Task Progress
+            let goalTasks = goal.tasks.compactMap { taskId in
+                taskManager.tasks.first { $0.id == taskId }
+            }
+            let completedTasks = goalTasks.filter { $0.isCompleted }
+            let progress = goalTasks.isEmpty ? 0.0 : Double(completedTasks.count) / Double(goalTasks.count)
+            
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
+                    Text("Tasks")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    
+                    Spacer()
+                    
+                    Text("\(completedTasks.count)/\(goalTasks.count)")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                
+                GeometryReader { geometry in
+                    ZStack(alignment: .leading) {
+                        Rectangle()
+                            .frame(width: geometry.size.width, height: 6)
+                            .opacity(0.3)
+                            .foregroundColor(Color(.systemGray4))
+                        
+                        Rectangle()
+                            .frame(width: geometry.size.width * progress, height: 6)
+                            .foregroundColor(.blue)
+                    }
+                    .cornerRadius(3)
+                }
+                .frame(height: 6)
+            }
+            
+            // Tasks Button
+            Button(action: {
+                showingTaskManagement = true
+            }) {
+                HStack {
+                    Image(systemName: "checklist")
+                    Text("Manage Tasks")
+                }
+                .font(.caption)
+                .padding(.vertical, 4)
+                .padding(.horizontal, 8)
+                .background(Color.blue.opacity(0.1))
+                .foregroundColor(.blue)
+                .cornerRadius(6)
+            }
+            
             if let deadline = goal.deadline {
                 HStack {
                     Image(systemName: "calendar")
@@ -277,100 +280,31 @@ struct GoalCard: View {
         .background(Color(.systemBackground))
         .cornerRadius(12)
         .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
+        .sheet(isPresented: $showingTaskManagement) {
+            TaskManagementView(
+                goal: goal,
+                taskManager: taskManager,
+                goalManager: goalManager
+            )
+        }
         .sheet(isPresented: $showingEditSheet) {
-            EditGoalView(goal: goal, workspace: workspace, workspaceManager: workspaceManager)
+            EditGoalView(goal: goal, goalManager: goalManager)
         }
         .alert(isPresented: $showingDeleteAlert) {
             Alert(
                 title: Text("Delete Goal"),
                 message: Text("Are you sure you want to delete '\(goal.title)'?"),
                 primaryButton: .destructive(Text("Delete")) {
-                    deleteGoal()
+                    goalManager.deleteGoal(goal)
                 },
                 secondaryButton: .cancel()
             )
         }
     }
-    
-    private func toggleCompletion() {
-        if let workspaceIndex = workspaceManager.workspaces.firstIndex(where: { $0.id == workspace.id }),
-           let goalIndex = workspaceManager.workspaces[workspaceIndex].goals.firstIndex(where: { $0.id == goal.id }) {
-            workspaceManager.workspaces[workspaceIndex].goals[goalIndex].isCompleted.toggle()
-            workspaceManager.saveToUserDefaults()
-            workspaceManager.forceSaveAndUpdate()
-        }
-    }
-    
-    private func deleteGoal() {
-        if let workspaceIndex = workspaceManager.workspaces.firstIndex(where: { $0.id == workspace.id }) {
-            workspaceManager.workspaces[workspaceIndex].goals.removeAll(where: { $0.id == goal.id })
-            workspaceManager.saveToUserDefaults()
-            workspaceManager.forceSaveAndUpdate()
-        }
-    }
-}
-
-struct WorkspacePrompt: View {
-    @ObservedObject var workspaceManager: WorkspaceManager
-    
-    var body: some View {
-        VStack(spacing: 20) {
-            Image(systemName: "folder.badge.questionmark")
-                .font(.system(size: 70))
-                .foregroundColor(.blue.opacity(0.7))
-            
-            Text("Select a Workspace")
-                .font(.title2)
-                .fontWeight(.bold)
-            
-            Text("Please select a workspace to view and manage goals")
-                .multilineTextAlignment(.center)
-                .foregroundColor(.secondary)
-                .padding(.horizontal)
-            
-            ScrollView {
-                VStack(spacing: 12) {
-                    ForEach(workspaceManager.workspaces) { workspace in
-                        Button(action: {
-                            workspaceManager.selectedWorkspace = workspace
-                            workspaceManager.saveToUserDefaults()
-                        }) {
-                            HStack {
-                                Image(systemName: workspace.icon)
-                                    .foregroundColor(.white)
-                                    .frame(width: 40, height: 40)
-                                    .background(workspace.color)
-                                    .cornerRadius(10)
-                                
-                                VStack(alignment: .leading) {
-                                    Text(workspace.name)
-                                        .font(.headline)
-                                    
-                                    Text("\(workspace.goals.count) goals, \(workspace.tasks.count) tasks")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                }
-                                
-                                Spacer()
-                                
-                                Image(systemName: "chevron.right")
-                                    .foregroundColor(.secondary)
-                            }
-                            .padding()
-                            .background(Color(.secondarySystemBackground))
-                            .cornerRadius(12)
-                        }
-                    }
-                }
-                .padding(.horizontal)
-            }
-        }
-        .padding()
-    }
 }
 
 struct AddGoalView: View {
-    @ObservedObject var workspaceManager: WorkspaceManager
+    @ObservedObject var goalManager: GoalManager
     @Environment(\.presentationMode) var presentationMode
     
     @State private var title = ""
@@ -417,28 +351,20 @@ struct AddGoalView: View {
     }
     
     private func saveGoal() {
-        guard let workspace = workspaceManager.selectedWorkspace, !title.isEmpty else { return }
-        
         let newGoal = Goal(
             title: title,
             description: description,
             deadline: hasDeadline ? deadline : nil
         )
         
-        if let index = workspaceManager.workspaces.firstIndex(where: { $0.id == workspace.id }) {
-            workspaceManager.workspaces[index].goals.append(newGoal)
-            workspaceManager.saveToUserDefaults()
-            workspaceManager.forceSaveAndUpdate()
-            
-            presentationMode.wrappedValue.dismiss()
-        }
+        goalManager.addGoal(newGoal)
+        presentationMode.wrappedValue.dismiss()
     }
 }
 
 struct EditGoalView: View {
-    var goal: Goal
-    var workspace: Workspace
-    var workspaceManager: WorkspaceManager
+    let goal: Goal
+    @ObservedObject var goalManager: GoalManager
     @Environment(\.presentationMode) var presentationMode
     
     @State private var title: String
@@ -447,10 +373,9 @@ struct EditGoalView: View {
     @State private var deadline: Date
     @State private var isCompleted: Bool
     
-    init(goal: Goal, workspace: Workspace, workspaceManager: WorkspaceManager) {
+    init(goal: Goal, goalManager: GoalManager) {
         self.goal = goal
-        self.workspace = workspace
-        self.workspaceManager = workspaceManager
+        self.goalManager = goalManager
         
         _title = State(initialValue: goal.title)
         _description = State(initialValue: goal.description)
@@ -500,21 +425,13 @@ struct EditGoalView: View {
     }
     
     private func updateGoal() {
-        guard !title.isEmpty else { return }
-        
         var updatedGoal = goal
         updatedGoal.title = title
         updatedGoal.description = description
         updatedGoal.deadline = hasDeadline ? deadline : nil
         updatedGoal.isCompleted = isCompleted
         
-        if let workspaceIndex = workspaceManager.workspaces.firstIndex(where: { $0.id == workspace.id }),
-           let goalIndex = workspaceManager.workspaces[workspaceIndex].goals.firstIndex(where: { $0.id == goal.id }) {
-            workspaceManager.workspaces[workspaceIndex].goals[goalIndex] = updatedGoal
-            workspaceManager.saveToUserDefaults()
-            workspaceManager.forceSaveAndUpdate()
-            
-            presentationMode.wrappedValue.dismiss()
-        }
+        goalManager.updateGoal(updatedGoal)
+        presentationMode.wrappedValue.dismiss()
     }
 }
